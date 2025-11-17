@@ -24,7 +24,7 @@ jobs:
           cd insert_dylib
           xcodebuild
           echo "Adding insert_dylib to path..."
-          # Add to $PATH for this job instead of sudo copy
+          # Add to $PATH for this job
           echo "$(pwd)/build/Release" >> $GITHUB_PATH
           cd ..
 
@@ -38,10 +38,13 @@ jobs:
             echo "Please go to Repository Settings > Secrets and variables > Actions to add it."
             exit 1
           fi
-          echo "Downloading YouTube IPA..."
-          # This assumes your Makefile looks for a file named "YouTube.ipa"
-          # If it looks for a different name, change the "-o" parameter
-          curl -L "$IPA_DOWNLOAD_URL" -o YouTube.ipa
+          
+          echo "Creating ipa directory..."
+          mkdir -p ipa
+          
+          echo "Downloading YouTube IPA to the path required by the Makefile..."
+          curl -L "$IPA_DOWNLOAD_URL" -o ipa/YouTube_4.51.08_decrypted.ipa
+          
           echo "Download complete."
 
       - name: Build mutube.ipa
@@ -51,5 +54,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mutube-ipa
-          # This assumes your 'make' command outputs a file named "mutube.ipa"
+          # This assumes your 'make' command outputs "mutube.ipa" to the root
           path: mutube.ipa
